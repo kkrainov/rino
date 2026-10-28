@@ -6,8 +6,13 @@ Status: settled on 2026-10-23, before the design doc is drafted. These are input
 
 This is an open-source, Rust-native, drop-in replacement for Trino, built on Apache DataFusion.
 
-- **Target users:** teams running Trino on Iceberg/S3. They want lower cost and lower latency.
-- **Goal: one engine for both workloads.** It runs heavy ETL and interactive BI-style queries, so teams can retire the second engine they add for fast dashboards (ClickHouse, StarRocks and similar). DataFusion's low per-query overhead is what makes the interactive side realistic: on ClickBench, Trino spends about 1.2 s on a query regardless of its size.
+- **Target users:** teams running Trino on Iceberg/S3.
+- **Goal: replace the JVM engine with a native one.** Trino is a mature engine, but some of its limits come from the JVM or from its single-coordinator architecture. Presto (Prestissimo), Spark (Photon, Gluten, Comet) have already moved execution to native code. Rino goes further and makes coordination native too. The hypotheses, which M0 and later milestones measure:
+  - *Lower cost:* more work per core and no JVM heap overhead.
+  - *No GC pauses.*
+  - *Elastic scaling:* a native binary starts at full speed in milliseconds, which suits Kubernetes, Karpenter and Spot.
+  - *No coordinator bottleneck:* symmetric nodes (see Topology), so losing one node doesn't take the cluster down.
+- **Side effect: interactive queries.** DataFusion's low per-query overhead (on ClickBench, Trino spends about 1.2 s on a query regardless of its size) lets the same engine serve BI dashboards, so teams can retire the second engine they add for them (ClickHouse, StarRocks and similar).
 - **Implications for the design:**
   - *Workload isolation:* ETL and dashboard queries share nodes, so we need priorities, queues and memory limits per workload class, similar to Trino's resource groups.
   - *Caching:* interactive latency on Iceberg/S3 is bounded by object-storage reads, so we need to cache Iceberg metadata, Parquet footers and data. See "Iceberg integration and caching" below.
