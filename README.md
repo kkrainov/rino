@@ -2,9 +2,10 @@
 
 Rino ("Trino without the T; R for Rust") is a working name for a planned open-source,
 Rust-native, drop-in replacement for [Trino](https://trino.io), built on
-[Apache DataFusion](https://datafusion.apache.org). The goal is one engine for heavy ETL
-and interactive BI-style queries on Iceberg, compatible with Trino's client protocol,
-SQL, functions and results.
+[Apache DataFusion](https://datafusion.apache.org). The goal is to replace the JVM engine
+with a native one: lower cost, no GC pauses, nodes that start fast enough for elastic
+scaling, and symmetric nodes instead of a single coordinator, while staying compatible
+with Trino's client protocol, SQL, functions and results.
 
 > **Status: research.** There is no engine code yet. The first milestone, M0, is a public
 > benchmark of the foundation (DataFusion + datafusion-distributed) against Trino's default

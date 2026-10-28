@@ -7,7 +7,7 @@ Status: settled on 2026-10-23, before the design doc is drafted. These are input
 This is an open-source, Rust-native, drop-in replacement for Trino, built on Apache DataFusion.
 
 - **Target users:** teams running Trino on Iceberg/S3.
-- **Goal: replace the JVM engine with a native one.** Trino is a mature engine, but some of its limits come from the JVM or from its single-coordinator architecture. Presto (Prestissimo), Spark (Photon, Gluten, Comet) have already moved execution to native code. Rino goes further and makes coordination native too. The hypotheses, which M0 and later milestones measure:
+- **Goal: replace the JVM engine with a native one.** Trino is a mature engine, but some of its limits come from the JVM or from its single-coordinator architecture. Presto (Prestissimo) and Spark (Photon, Gluten, Comet) have already moved execution to native code. Rino goes further and makes coordination native too. The hypotheses, which M0 and later milestones measure:
   - *Lower cost:* more work per core and no JVM heap overhead.
   - *No GC pauses.*
   - *Elastic scaling:* a native binary starts at full speed in milliseconds, which suits Kubernetes, Karpenter and Spot.
