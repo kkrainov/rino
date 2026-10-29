@@ -12,7 +12,7 @@ This is an open-source, Rust-native, drop-in replacement for Trino, built on Apa
   - *No GC pauses.*
   - *Elastic scaling:* a native binary starts at full speed in milliseconds, which suits Kubernetes, Karpenter and Spot.
   - *No coordinator bottleneck:* symmetric nodes (see Topology), so losing one node doesn't take the cluster down.
-- **Side effect: interactive queries.** DataFusion's low per-query overhead (on ClickBench, Trino spends about 1.2 s on a query regardless of its size) lets the same engine serve BI dashboards, so teams can retire the second engine they add for them (ClickHouse, StarRocks and similar).
+- **Interactive workloads, one of the main goals.** The same engine serves BI dashboards and AI-agent workloads, both of which send many small concurrent queries, so teams can retire the second engine they add for them (ClickHouse, StarRocks and similar). Symmetric nodes spread planning and coordination across the cluster, native execution keeps tail latency predictable under concurrency, and DataFusion is close to ClickHouse when both read the same Parquet files.
 - **Implications for the design:**
   - *Workload isolation:* ETL and dashboard queries share nodes, so we need priorities, queues and memory limits per workload class, similar to Trino's resource groups.
   - *Caching:* interactive latency on Iceberg/S3 is bounded by object-storage reads, so we need to cache Iceberg metadata, Parquet footers and data. See "Iceberg integration and caching" below.
