@@ -10,7 +10,6 @@ This is an open-source, Rust-native, drop-in replacement for Trino, built on Apa
 - **Goal: replace the JVM engine with a native one.** Trino is a mature engine, but some of its limits come from the JVM or from its single-coordinator architecture. Presto (Prestissimo) and Spark (Photon, Gluten, Comet) have already moved execution to native code. Rino goes further and makes coordination native too. The hypotheses, which M0 and later milestones measure:
   - *Lower cost:* more work per core and no JVM heap overhead.
   - *No GC pauses.*
-  - *Elastic scaling:* a native binary starts at full speed in milliseconds, which suits Kubernetes, Karpenter and Spot.
   - *No coordinator bottleneck:* symmetric nodes (see Topology), so losing one node doesn't take the cluster down.
 - **Interactive workloads, one of the main goals.** The same engine serves BI dashboards and AI-agent workloads, both of which send many small concurrent queries, so teams can retire the second engine they add for them (ClickHouse, StarRocks and similar). Symmetric nodes spread planning and coordination across the cluster, native execution keeps tail latency predictable under concurrency, and DataFusion is close to ClickHouse when both read the same Parquet files.
 - **Implications for the design:**
